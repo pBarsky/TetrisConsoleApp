@@ -26,7 +26,7 @@ namespace TetrisConsoleApp
             this.posY = posY;
         }
 
-        private int[,] rotate(bool clockDirection)
+        private int[,] Rotate(bool clockDirection)
         {
             int size = shape.GetLength(0);
             int[,] result = new int[size, size];
@@ -53,23 +53,23 @@ namespace TetrisConsoleApp
 
         public void DoRotate(bool right = true)
         {
-            shape = rotate(right);
+            shape = Rotate(right);
         }
 
         public void MoveDown()
         {
-            move(0, 1);
+            Move(0, 1);
         }
 
         public void MoveLeft()
         {
-            move(-1, 0);
+            Move(-1, 0);
         }
         public void MoveRight()
         {
-            move(1, 0);
+            Move(1, 0);
         }
-        private void move(int offsetX, int offsetY)
+        private void Move(int offsetX, int offsetY)
         {
             posX += offsetX;
             posY += offsetY;

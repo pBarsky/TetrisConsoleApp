@@ -8,7 +8,7 @@ namespace TetrisConsoleApp
 {
     class BeamBrick : Brick
     {
-        public BeamBrick(int size = 5, int x = 0, int y = 0) : base(size, "BeamBrick", x, y)
+        public BeamBrick(int size = 3, int x = 0, int y = 0) : base(size, "BeamBrick", x, y)
         {
             for(int i = 0; i < size; i++)
                 shape[size / 2, i] = 1;
