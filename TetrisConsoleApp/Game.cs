@@ -21,8 +21,25 @@ namespace TetrisConsoleApp
         private Board _board = new Board();
         private bool _alive = true;
         private bool _hasChanged = false;
+        private readonly Random _random = new Random(DateTime.Now.Millisecond);
+        private int _score;
+        public bool isFinished => !_alive; // TODO: make replay feature (player can restart after losing) 
+        private void Show()
+        {
+            Console.Clear();
+            string output = "";
+            string[] buffer = _board.Buffer;
+            buffer[0] += "\tScore: " + _score.ToString() + "\n";
+            output += buffer[0];
+            for(int i = 1; i < buffer.Length; i++)
+            {
+                output += buffer[i] + "\n";
+            }
+            Console.Write(output);
+        }
         public void Play()
         {
+            _alive = true;
             Stopwatch stopwatch = new Stopwatch();
             long millisecondsPassed = 0L;
             stopwatch.Start();
@@ -40,7 +57,7 @@ namespace TetrisConsoleApp
                     }
                     if(_hasChanged)
                     {
-                        _board.Show();
+                        Show();
                     }
                     _hasChanged = false;
                     millisecondsPassed += stopwatch.ElapsedMilliseconds;
@@ -63,6 +80,8 @@ namespace TetrisConsoleApp
                     else
                     {
                         _board.FreezeBrick(_currentBrick);
+                        _score += _board.Gravitate(_board.CheckBoard(), 1);
+                        NextBrick();
                     }
                     break;
                 case KeyCommand.Left:
@@ -85,16 +104,8 @@ namespace TetrisConsoleApp
                     _currentBrick.DoRotate(false);
                     if(!_board.IsColliding(_currentBrick, 0, 0))
                     {
-                        if(!_board.IsColliding(_currentBrick, 0, 1))
-                        {
-                            _hasChanged = true;
-                            _currentBrick.MoveDown();
-                            _board.InsertBrick(_currentBrick);
-                        }
-                        else
-                        {
-                            _board.FreezeBrick(_currentBrick);
-                        }
+                        _hasChanged = true;
+                        _board.InsertBrick(_currentBrick);
                     }
                     else
                     {
@@ -130,6 +141,28 @@ namespace TetrisConsoleApp
                 }
             }
             return resultKeyCommand;
+        }
+
+        private void NextBrick()
+        {
+            switch(_random.Next(0, 5))
+            {
+                case 0:
+                    _currentBrick = new BeamBrick();
+                    break;
+                case 1:
+                    _currentBrick = new CrossBrick();
+                    break;
+                case 2:
+                    _currentBrick = new ElBrick();
+                    break;
+                case 3:
+                    _currentBrick = new SquareBrick();
+                    break;
+                case 4:
+                    _currentBrick = new TeeBrick();
+                    break;
+            }
         }
     }
 }
