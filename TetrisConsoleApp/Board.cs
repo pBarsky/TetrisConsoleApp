@@ -71,5 +71,33 @@ namespace TetrisConsoleApp
                     if(brick.Shape[i, j] != 0)
                         tab[brick.PosY + i, brick.PosX + j] = 2;
         }
+
+        public int CheckBoard()
+        {
+            int counter = 0;
+            for(int i = 0; i < Height; i++)
+            {
+                for(int j = 0; j < Width; j++)
+                {
+                    if(tab[i, j] != 2)
+                        break;
+                    else
+                        counter++;
+                }
+
+                if(counter == Width - 1)
+                    return i;
+                else
+                    counter = 0;
+            }
+            return 0;
+        }
+
+        public void Gravitate(int level)
+        {
+            for(int i = level - 1; i >= 0; i--)
+                for(int j = 0; j < Width; j++)
+                    tab[i + 1, j] = tab[i, j];
+        }
     }
 }

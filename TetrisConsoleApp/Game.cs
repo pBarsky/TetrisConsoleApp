@@ -12,103 +12,96 @@ namespace TetrisConsoleApp
         Down = 0,
         Left = 1,
         Right = 2,
-        FastDown = 3,
-        RotateLeft = 4,
+        RotateLeft = 3,
+        None = -1
     }
     class Game
     {
-        private Brick currentBrick = new BeamBrick();
-        private Board board = new Board();
-        private bool alive = true;
-        private bool hasChanged = false;
+        private Brick _currentBrick = new BeamBrick();
+        private Board _board = new Board();
+        private bool _alive = true;
+        private bool _hasChanged = false;
         public void Play()
         {
             Stopwatch stopwatch = new Stopwatch();
+            long millisecondsPassed = 0L;
             stopwatch.Start();
-            while(alive)
+            while(_alive)
             {
-                KeyCommand direction = GetDirection();
-                if(stopwatch.ElapsedMilliseconds > 1000)
+                if(stopwatch.ElapsedMilliseconds > 100)
                 {
-                    board.ShallowClear();
-                    HandleInput(direction);
-                    if(hasChanged)
-                        board.Show();
-                    hasChanged = false;
+                    _board.ShallowClear();
+                    HandleInput(GetDirection());
+                    if(millisecondsPassed > 1000)
+                    {
+                        _board.ShallowClear();
+                        HandleInput(KeyCommand.Down);
+                        millisecondsPassed = 0L;
+                    }
+                    if(_hasChanged)
+                    {
+                        _board.Show();
+                    }
+                    _hasChanged = false;
+                    millisecondsPassed += stopwatch.ElapsedMilliseconds;
                     stopwatch.Restart();
                 }
             }
         }
 
-        private KeyCommand GetInput()
-        {
-            return GetDirection();
-        }
         private void HandleInput(KeyCommand direction)
         {
             switch(direction)
             {
                 case KeyCommand.Down:
-                    if(!board.IsColliding(currentBrick, 0, 1))
+                    if(!_board.IsColliding(_currentBrick, 0, 1))
                     {
-                        hasChanged = true;
-                        currentBrick.MoveDown();
-                        board.InsertBrick(currentBrick);
+                        _hasChanged = true;
+                        _currentBrick.MoveDown();
+                        _board.InsertBrick(_currentBrick);
                     }
                     else
                     {
-                        board.FreezeBrick(currentBrick);
+                        _board.FreezeBrick(_currentBrick);
                     }
                     break;
                 case KeyCommand.Left:
-                    if(!board.IsColliding(currentBrick, -1, 0))
+                    if(!_board.IsColliding(_currentBrick, -1, 0))
                     {
-                        hasChanged = true;
-                        currentBrick.MoveLeft();
-                        board.InsertBrick(currentBrick);
+                        _hasChanged = true;
+                        _currentBrick.MoveLeft();
+                        _board.InsertBrick(_currentBrick);
                     }
                     break;
                 case KeyCommand.Right:
-                    if(!board.IsColliding(currentBrick, 1, 0))
+                    if(!_board.IsColliding(_currentBrick, 1, 0))
                     {
-                        hasChanged = true;
-                        currentBrick.MoveRight();
-                        board.InsertBrick(currentBrick);
-                    }
-                    break;
-                case KeyCommand.FastDown:
-                    // ALERT: FORCES GAME TO UPDATE VIEW
-                    if(!board.IsColliding(currentBrick, 0, 1))
-                    {
-                        // TODO: finish
-                        currentBrick.MoveDown();
-                        board.InsertBrick(currentBrick);
-                        board.Show();
-                    }
-                    else
-                    {
-                        board.FreezeBrick(currentBrick);
+                        _hasChanged = true;
+                        _currentBrick.MoveRight();
+                        _board.InsertBrick(_currentBrick);
                     }
                     break;
                 case KeyCommand.RotateLeft:
-                    currentBrick.DoRotate(false);
-                    if(!board.IsColliding(currentBrick, 0, 0))
+                    _currentBrick.DoRotate(false);
+                    if(!_board.IsColliding(_currentBrick, 0, 0))
                     {
-                        if(!board.IsColliding(currentBrick, 0, 1))
+                        if(!_board.IsColliding(_currentBrick, 0, 1))
                         {
-                            hasChanged = true;
-                            currentBrick.MoveDown();
-                            board.InsertBrick(currentBrick);
+                            _hasChanged = true;
+                            _currentBrick.MoveDown();
+                            _board.InsertBrick(_currentBrick);
                         }
                         else
                         {
-                            board.FreezeBrick(currentBrick);
+                            _board.FreezeBrick(_currentBrick);
                         }
                     }
                     else
                     {
-                        currentBrick.DoRotate(true);
+                        _currentBrick.DoRotate(true);
                     }
+                    break;
+                case KeyCommand.None:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -117,7 +110,7 @@ namespace TetrisConsoleApp
 
         private KeyCommand GetDirection()
         {
-            KeyCommand resultKeyCommand = KeyCommand.Down;
+            KeyCommand resultKeyCommand = KeyCommand.None;
             while(Console.KeyAvailable)
             {
                 switch(Console.ReadKey(true).Key)
@@ -132,7 +125,7 @@ namespace TetrisConsoleApp
                         resultKeyCommand = KeyCommand.RotateLeft;
                         break;
                     case ConsoleKey.DownArrow:
-                        resultKeyCommand = KeyCommand.FastDown;
+                        resultKeyCommand = KeyCommand.Down;
                         break;
                 }
             }
