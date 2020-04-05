@@ -55,6 +55,7 @@
     <Compile Include="SquareBrick.cs" />
     <Compile Include="TeeBrick.cs" />
     <Compile Include="TestBrick.cs" />
+    <Compile Include="ZigZagBrick.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
