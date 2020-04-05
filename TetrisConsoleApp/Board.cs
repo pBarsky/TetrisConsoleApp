@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -25,7 +25,7 @@ namespace TetrisConsoleApp
                 return buffer;
             }
         }
-        public Board(int width = 20, int height = 10)
+        public Board(int width = 10, int height = 20)
         {
             this._width = width;
             this._height = height;
