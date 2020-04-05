@@ -106,14 +106,14 @@ namespace TetrisConsoleApp
             return -1;
         }
 
-        public int Gravitate(int level, int multiplier)
+        public int Gravitate(int level, int multiplier = 10)
         {
             if(level == -1) return 1;
             for(int i = level - 1; i >= 0; i--)
                 for(int j = 0; j < _width; j++)
                     tab[i + 1, j] = tab[i, j];
-            return multiplier * Gravitate(CheckBoard(), multiplier + 1);
-            // TODO: fix scoring
+            return multiplier * Gravitate(CheckBoard(), multiplier + 10);
+            // TODO: swap recursion to iteration
         }
 
     }
