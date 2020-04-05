@@ -19,14 +19,20 @@ namespace TetrisConsoleApp
     {
         private Brick _currentBrick = new BeamBrick();
         private Board _board = new Board();
-        private bool _alive = true;
+        private bool _alive = true; // TODO: add replay feature (player can restart after losing) 
         private bool _hasChanged = false;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
         private int _score;
-        public bool isFinished => !_alive; // TODO: make replay feature (player can restart after losing) 
+        private static Game _instance = new Game();
+        public static Game Instance => _instance;
+        static Game()
+        {
+            Console.CursorVisible = false;
+        }
+
         private void Show()
         {
-            Console.Clear();
+            Console.SetCursorPosition(0, 0);
             string output = "";
             string[] buffer = _board.Buffer;
             buffer[0] += "\tScore: " + _score.ToString() + "\n";
@@ -48,7 +54,7 @@ namespace TetrisConsoleApp
                 if(stopwatch.ElapsedMilliseconds > 100)
                 {
                     _board.ShallowClear();
-                    HandleInput(GetDirection());
+                    HandleInput(GetDirection(), true);
                     if(millisecondsPassed > 1000)
                     {
                         _board.ShallowClear();
@@ -66,7 +72,7 @@ namespace TetrisConsoleApp
             }
         }
 
-        private void HandleInput(KeyCommand direction)
+        private void HandleInput(KeyCommand direction, bool fastForward = false)
         {
             switch(direction)
             {
@@ -75,12 +81,14 @@ namespace TetrisConsoleApp
                     {
                         _hasChanged = true;
                         _currentBrick.MoveDown();
+                        if(fastForward)
+                            _score += 1;
                         _board.InsertBrick(_currentBrick);
                     }
                     else
                     {
                         _board.FreezeBrick(_currentBrick);
-                        _score += _board.Gravitate(_board.CheckBoard(), 1);
+                        _score += _board.Gravitate(_board.CheckBoard(), _board.Width);
                         NextBrick();
                     }
                     break;
@@ -145,7 +153,7 @@ namespace TetrisConsoleApp
 
         private void NextBrick()
         {
-            switch(_random.Next(0, 5))
+            switch(_random.Next(0, 6))
             {
                 case 0:
                     _currentBrick = new BeamBrick();
@@ -161,6 +169,9 @@ namespace TetrisConsoleApp
                     break;
                 case 4:
                     _currentBrick = new TeeBrick();
+                    break;
+                case 5:
+                    _currentBrick = new ZigZagBrick();
                     break;
             }
         }
