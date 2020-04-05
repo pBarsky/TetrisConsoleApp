@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +9,8 @@ namespace TetrisConsoleApp
         protected int[,] tab;
         private readonly int _width;
         private readonly int _height;
+        public int Width => _width;
+        public int Height => _height;
 
         public string[] Buffer {
             get {
@@ -18,6 +20,7 @@ namespace TetrisConsoleApp
                     for(int j = 0; j < _width; j++)
                     {
                         buffer[i] += tab[i, j] != 0 ? "#" : " ";
+                        //buffer[i] += tab[i, j] != 0 ? (tab[i, j] == 1 ? "+" : "#") : " ";
                     }
 
                     buffer[i] += "|\t" + i.ToString();
@@ -38,7 +41,6 @@ namespace TetrisConsoleApp
             {
                 for(int j = 0; j < _width; j++)
                     Console.Write(tab[i, j] != 0 ? "#" : " ");
-                //Console.Write(tab[i, j] != 0 ? (tab[i, j] == 1 ? "A" : "B") : " ");
                 Console.WriteLine("|\t" + i.ToString());
             }
         }
