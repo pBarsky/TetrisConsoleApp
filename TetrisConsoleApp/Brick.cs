@@ -18,7 +18,7 @@ namespace TetrisConsoleApp
         public int Height => shape.GetLength(0);
         public int Width => shape.GetLength(1);
 
-        public Brick(int size, string name, int posX, int posY)
+        public Brick(int size = 1, string name = "", int posX = 0, int posY = 0)
         {
             shape = new int[size, size];
             this.Name = name;
@@ -73,6 +73,19 @@ namespace TetrisConsoleApp
         {
             posX += offsetX;
             posY += offsetY;
+        }
+
+        public void RestartPosition(int newPosX)
+        {
+            posY = 0;
+            posX = newPosX;
+        }
+
+        public Brick DeepCopy()
+        {
+            Brick outputBrick = (Brick)this.MemberwiseClone();
+            outputBrick.shape = (int[,])shape.Clone();
+            return outputBrick;
         }
     }
 }
