@@ -15,5 +15,9 @@ namespace TetrisConsoleApp
             for(int i = 0; i < size - 1; i++)
                 shape[i, size - 1] = 1;
         }
+
+        public ElBrick() : this(3, 0, 0)
+        {
+        }
     }
 }

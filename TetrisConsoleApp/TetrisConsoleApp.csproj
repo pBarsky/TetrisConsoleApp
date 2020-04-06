@@ -54,7 +54,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SquareBrick.cs" />
     <Compile Include="TeeBrick.cs" />
-    <Compile Include="TestBrick.cs" />
     <Compile Include="ZigZagBrick.cs" />
   </ItemGroup>
   <ItemGroup>

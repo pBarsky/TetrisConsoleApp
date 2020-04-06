@@ -13,5 +13,9 @@ namespace TetrisConsoleApp
             for(int i = 0; i < size; i++)
                 shape[size / 2, i] = 1;
         }
+
+        public BeamBrick() : this(3, 0, 0)
+        {
+        }
     }
 }

@@ -15,5 +15,8 @@ namespace TetrisConsoleApp
             for(int i = 0; i < size - 1; i++)
                 shape[i, size / 2] = 1;
         }
+        public TeeBrick() : this(3, 0, 0)
+        {
+        }
     }
 }

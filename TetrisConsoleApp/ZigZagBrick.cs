@@ -15,5 +15,8 @@ namespace TetrisConsoleApp
             shape[1, 1] = 1;
             shape[1, 2] = 1;
         }
+        public ZigZagBrick() : this(3, 0, 0)
+        {
+        }
     }
 }

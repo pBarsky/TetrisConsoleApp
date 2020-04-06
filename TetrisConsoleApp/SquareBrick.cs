@@ -14,5 +14,8 @@ namespace TetrisConsoleApp
                 for(int j = 0; j < size; j++)
                     shape[i, j] = 1;
         }
+        public SquareBrick() : this(2, 0, 0)
+        {
+        }
     }
 }

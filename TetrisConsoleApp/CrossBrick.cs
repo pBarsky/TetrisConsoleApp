@@ -16,5 +16,8 @@ namespace TetrisConsoleApp
                 shape[i, size / 2] = 1;
             }
         }
+        public CrossBrick() : this(3, 0, 0)
+        {
+        }
     }
 }
