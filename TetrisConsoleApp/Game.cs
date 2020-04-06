@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace TetrisConsoleApp
     {
         private Brick _currentBrick = new BeamBrick();
         private Board _board = new Board();
-        private bool _alive = true; // TODO: add replay feature (player can restart after losing) 
+        private bool _alive = true;
         private bool _hasChanged = false;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
         private int _score;
@@ -28,7 +29,6 @@ namespace TetrisConsoleApp
         public static Game Instance => _instance;
         static Game()
         {
-            Console.CursorVisible = false;
             IEnumerable<Brick> bricks = typeof(Brick).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Brick)))
                 .Select(t => (Brick)Activator.CreateInstance(t));
@@ -42,39 +42,90 @@ namespace TetrisConsoleApp
             string[] buffer = _board.Buffer;
             buffer[0] += "\tScore: " + _score.ToString() + "\n";
             output += buffer[0];
-            for(int i = 1; i < buffer.Length; i++)
+            for(var i = 1; i < buffer.Length; i++)
             {
                 output += buffer[i] + "\n";
             }
             Console.Write(output);
         }
+
         public void Play()
         {
+            Console.Clear();
+            Console.CursorVisible = false;
+
             _alive = true;
             Stopwatch stopwatch = new Stopwatch();
-            long millisecondsPassed = 0L;
+            var millisecondsPassed = 0L;
             stopwatch.Start();
             while(_alive)
             {
-                if(stopwatch.ElapsedMilliseconds > 100)
+                if(stopwatch.ElapsedMilliseconds <= 100) continue;
+                _board.ShallowClear();
+                HandleInput(GetDirection(), true);
+                if(millisecondsPassed > 1000)
                 {
                     _board.ShallowClear();
-                    HandleInput(GetDirection(), true);
-                    if(millisecondsPassed > 1000)
-                    {
-                        _board.ShallowClear();
-                        HandleInput(KeyCommand.Down);
-                        millisecondsPassed = 0L;
-                    }
-                    if(_hasChanged)
-                    {
-                        Show();
-                    }
-                    _hasChanged = false;
-                    millisecondsPassed += stopwatch.ElapsedMilliseconds;
-                    stopwatch.Restart();
+                    HandleInput(KeyCommand.Down);
+                    millisecondsPassed = 0L;
+                }
+                if(_hasChanged)
+                    Show();
+                _hasChanged = false;
+                millisecondsPassed += stopwatch.ElapsedMilliseconds;
+                stopwatch.Restart();
+            }
+            GameOver();
+        }
+
+        private void GameOver()
+        {
+            Console.WriteLine($"\n\nGAME OVER\n\tYOU'VE SCORED: {_score} POINTS!!");
+            Console.CursorVisible = true;
+            Console.WriteLine("Please enter your name: ");
+            SaveScore(Console.ReadLine());
+            Console.WriteLine("RETRY? (y\\n)");
+            while(true)
+            {
+                var key = Console.ReadKey(true).Key;
+                switch(key)
+                {
+                    case ConsoleKey.Y:
+                        RestartGame();
+                        break;
+                    case ConsoleKey.N:
+                    case ConsoleKey.Escape:
+                        return;
+                    default:
+                        Console.WriteLine("RETRY? (y\\n)");
+                        key = Console.ReadKey().Key;
+                        break;
                 }
             }
+
+        }
+
+        private void SaveScore(string name)
+        {
+            try
+            {
+                using(var streamWriter = new StreamWriter(@".\scores.txt", true))
+                {
+                    streamWriter.WriteLine($"{name}: {_score}");
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("COULD NOT SAVE SCORE TO FILE");
+                Console.WriteLine(e.Message);
+            }
+
+        }
+        private void RestartGame()
+        {
+            _score = 0;
+            _board.DeepClear();
+            Play();
         }
 
         private void HandleInput(KeyCommand direction, bool fastForward = false)
