@@ -12,7 +12,6 @@ namespace TetrisConsoleApp
         {
             Game game = Game.Instance;
             game.Play();
-            Console.ReadLine();
         }
     }
 }
