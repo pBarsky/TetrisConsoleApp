@@ -23,11 +23,16 @@ namespace TetrisConsoleApp
         private bool _hasChanged = false;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
         private int _score;
+        private static List<Brick> _allAvailableBrick;
         private static Game _instance = new Game();
         public static Game Instance => _instance;
         static Game()
         {
             Console.CursorVisible = false;
+            IEnumerable<Brick> bricks = typeof(Brick).Assembly.GetTypes()
+                .Where(t => t.IsSubclassOf(typeof(Brick)))
+                .Select(t => (Brick)Activator.CreateInstance(t));
+            _allAvailableBrick = bricks.Cast<Brick>().ToList();
         }
 
         private void Show()
@@ -153,27 +158,10 @@ namespace TetrisConsoleApp
 
         private void NextBrick()
         {
-            switch(_random.Next(0, 6))
-            {
-                case 0:
-                    _currentBrick = new BeamBrick();
-                    break;
-                case 1:
-                    _currentBrick = new CrossBrick();
-                    break;
-                case 2:
-                    _currentBrick = new ElBrick();
-                    break;
-                case 3:
-                    _currentBrick = new SquareBrick();
-                    break;
-                case 4:
-                    _currentBrick = new TeeBrick();
-                    break;
-                case 5:
-                    _currentBrick = new ZigZagBrick();
-                    break;
-            }
+            _currentBrick = _allAvailableBrick[_random.Next(_allAvailableBrick.Count)].DeepCopy();
+            _currentBrick.RestartPosition(_random.Next(_board.Width - _currentBrick.Width));
+            if(_board.IsColliding(_currentBrick, 0, 0))
+                _alive = false;
         }
     }
 }
