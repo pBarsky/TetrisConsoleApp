@@ -18,7 +18,21 @@ namespace TetrisConsoleApp
         public int Height => shape.GetLength(0);
         public int Width => shape.GetLength(1);
 
-        public Brick(int size = 1, string name = "", int posX = 0, int posY = 0)
+        public string[] Buffer {
+            get {
+                string[] buffer = new string[Height];
+                for(int i = 0; i < Height; i++)
+                {
+                    buffer[i] = "";
+                    for(int j = 0; j < Width; j++)
+                        if(shape[i, j] != 0)
+                            buffer[i] += shape[i, j] == 1 ? '#' : ' ';
+                }
+                return buffer;
+            }
+        }
+
+        protected Brick(int size = 1, string name = "", int posX = 0, int posY = 0)
         {
             shape = new int[size, size];
             this.Name = name;
@@ -43,9 +57,9 @@ namespace TetrisConsoleApp
 
         public void ShowBrick()
         {
-            for(int i = 0; i < shape.GetLength(0); i++)
+            for(int i = 0; i < Height; i++)
             {
-                for(int j = 0; j < shape.GetLength(0); j++)
+                for(int j = 0; j < Width; j++)
                     Console.Write(shape[i, j]);
                 Console.Write("\n");
             }

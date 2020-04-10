@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TetrisConsoleApp
 {
@@ -21,18 +19,20 @@ namespace TetrisConsoleApp
         private Brick _currentBrick = new BeamBrick();
         private Board _board = new Board();
         private bool _alive = true;
-        private bool _hasChanged = false;
+        private bool _hasChanged;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
         private int _score;
-        private static List<Brick> _allAvailableBrick;
+        private static List<Brick> _allAvailableBricks;
+        private BricksQueue _bricksQueue = new BricksQueue();
         private static Game _instance = new Game();
+
         public static Game Instance => _instance;
         static Game()
         {
             IEnumerable<Brick> bricks = typeof(Brick).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Brick)))
                 .Select(t => (Brick)Activator.CreateInstance(t));
-            _allAvailableBrick = bricks.Cast<Brick>().ToList();
+            _allAvailableBricks = bricks.ToList();
         }
 
         private void Show()
@@ -42,21 +42,25 @@ namespace TetrisConsoleApp
             string[] buffer = _board.Buffer;
             buffer[0] += "\tScore: " + _score.ToString() + "\n";
             output += buffer[0];
-            for(var i = 1; i < buffer.Length; i++)
+            for(int i = 1; i < buffer.Length; i++)
             {
                 output += buffer[i] + "\n";
             }
-            Console.Write(output);
+            //Console.Write(output);
+            foreach(var s in _bricksQueue.Buffer)
+            {
+                Console.WriteLine(s);
+            }
         }
 
         public void Play()
         {
             Console.Clear();
             Console.CursorVisible = false;
-
+            PopulateQueue();
             _alive = true;
             Stopwatch stopwatch = new Stopwatch();
-            var millisecondsPassed = 0L;
+            long millisecondsPassed = 0L;
             stopwatch.Start();
             while(_alive)
             {
@@ -98,7 +102,6 @@ namespace TetrisConsoleApp
                         return;
                     default:
                         Console.WriteLine("RETRY? (y\\n)");
-                        key = Console.ReadKey().Key;
                         break;
                 }
             }
@@ -144,7 +147,7 @@ namespace TetrisConsoleApp
                     else
                     {
                         _board.FreezeBrick(_currentBrick);
-                        _score += _board.Gravitate(_board.CheckBoard(), _board.Width);
+                        _score += _board.Gravitate(_board.Width);
                         NextBrick();
                     }
                     break;
@@ -173,7 +176,7 @@ namespace TetrisConsoleApp
                     }
                     else
                     {
-                        _currentBrick.DoRotate(true);
+                        _currentBrick.DoRotate();
                     }
                     break;
                 case KeyCommand.None:
@@ -209,10 +212,22 @@ namespace TetrisConsoleApp
 
         private void NextBrick()
         {
-            _currentBrick = _allAvailableBrick[_random.Next(_allAvailableBrick.Count)].DeepCopy();
+            _currentBrick = _bricksQueue.Dequeue();
+            EnqueueNewBrick();
             _currentBrick.RestartPosition(_random.Next(_board.Width - _currentBrick.Width));
             if(_board.IsColliding(_currentBrick, 0, 0))
                 _alive = false;
+        }
+
+        private void PopulateQueue(int size = 3)
+        {
+            for(var i = 0; i < size; i++)
+                EnqueueNewBrick();
+        }
+
+        private void EnqueueNewBrick()
+        {
+            _bricksQueue.Enqueue(_allAvailableBricks[_random.Next(_allAvailableBricks.Count)].DeepCopy());
         }
     }
 }
