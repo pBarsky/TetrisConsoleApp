@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,16 +14,19 @@ namespace TetrisConsoleApp
 
         public string[] Buffer {
             get {
-                string[] buffer = new string[_height];
-                for(int i = 0; i < _height; i++)
+                string[] buffer = new string[_height + 1];
+                buffer[0] = buffer[_height] = " " + new string('=', _width);
+                for(int i = 1; i < _height; i++)
                 {
+                    buffer[i] += "|";
                     for(int j = 0; j < _width; j++)
                     {
                         buffer[i] += tab[i, j] != 0 ? "#" : " ";
                         //buffer[i] += tab[i, j] != 0 ? (tab[i, j] == 1 ? "+" : "#") : " ";
                     }
 
-                    buffer[i] += "|\t" + i.ToString();
+                    //buffer[i] += "|\t" + i.ToString();
+                    buffer[i] += "|";
                 }
                 return buffer;
             }
@@ -34,7 +37,7 @@ namespace TetrisConsoleApp
             this._height = height;
             tab = new int[height, width];
         }
-        public void Show()
+        public void Show() //TODO: delete this
         {
             Console.Clear();
             for(int i = 0; i < _height; i++)
