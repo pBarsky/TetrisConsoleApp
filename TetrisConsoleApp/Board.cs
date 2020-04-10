@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -108,15 +108,20 @@ namespace TetrisConsoleApp
             return -1;
         }
 
-        public int Gravitate(int level, int multiplier = 10)
+        public int Gravitate(int multiplier = 10)
         {
-            if(level == -1) return 1;
-            for(int i = level - 1; i >= 0; i--)
-                for(int j = 0; j < _width; j++)
-                    tab[i + 1, j] = tab[i, j];
-            return multiplier * Gravitate(CheckBoard(), multiplier + 10);
-            // TODO: swap recursion to iteration
+            int level = CheckBoard();
+            int score = 1;
+            while(level != -1)
+            {
+                for(int i = level - 1; i >= 0; i--)
+                    for(int j = 0; j < _width; j++)
+                        tab[i + 1, j] = tab[i, j];
+                level = CheckBoard();
+                score *= multiplier;
+                multiplier++;
+            }
+            return score;
         }
-
     }
 }
