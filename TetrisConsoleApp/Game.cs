@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -37,19 +37,30 @@ namespace TetrisConsoleApp
 
         private void Show()
         {
-            Console.SetCursorPosition(0, 0);
             string output = "";
             string[] buffer = _board.Buffer;
+            string[] brickQueueBuffer = _bricksQueue.Buffer;
             buffer[0] += "\tScore: " + _score.ToString() + "\n";
             output += buffer[0];
+            ClearBricksQueueBuffer();
+            Console.SetCursorPosition(0, 0);
             for(int i = 1; i < buffer.Length; i++)
             {
-                output += buffer[i] + "\n";
+                output += buffer[i];
+                if(i < brickQueueBuffer.Length)
+                    output += '\t' + brickQueueBuffer[i - 1];
+                output += '\n';
             }
-            //Console.Write(output);
-            foreach(var s in _bricksQueue.Buffer)
+            Console.Write(output);
+        }
+
+        private void ClearBricksQueueBuffer()
+        {
+            string clearLine = new string(' ', 20);
+            for(int i = 1; i < _board.Height; i++)
             {
-                Console.WriteLine(s);
+                Console.SetCursorPosition(_board.Width + 2, 1 + i);
+                Console.Write(clearLine);
             }
         }
 

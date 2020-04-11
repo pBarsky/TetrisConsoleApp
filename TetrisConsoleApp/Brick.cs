@@ -25,8 +25,7 @@ namespace TetrisConsoleApp
                 {
                     buffer[i] = "";
                     for(int j = 0; j < Width; j++)
-                        if(shape[i, j] != 0)
-                            buffer[i] += shape[i, j] == 1 ? '#' : ' ';
+                        buffer[i] += shape[i, j] == 1 ? '#' : ' ';
                 }
                 return buffer;
             }
