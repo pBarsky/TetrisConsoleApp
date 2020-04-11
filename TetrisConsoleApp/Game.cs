@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -221,7 +221,7 @@ namespace TetrisConsoleApp
 
         private void PopulateQueue(int size = 3)
         {
-            for(var i = 0; i < size; i++)
+            for(int i = 0; i < size; i++)
                 EnqueueNewBrick();
         }
 

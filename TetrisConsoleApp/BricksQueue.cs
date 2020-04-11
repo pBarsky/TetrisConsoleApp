@@ -18,10 +18,10 @@ namespace TetrisConsoleApp
                 string[] buffer = new string[height];
                 int lineCounter = 0;
                 int brickCounter = 0;
-                foreach(var brick in _bricksQueue)
+                foreach(Brick brick in _bricksQueue)
                 {
                     buffer[lineCounter++] = $"Brick {++brickCounter}.:";
-                    foreach(var s in brick.Buffer)
+                    foreach(string s in brick.Buffer)
                     {
                         buffer[lineCounter++] = '\t' + s;
                     }
