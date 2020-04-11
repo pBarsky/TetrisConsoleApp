@@ -10,7 +10,7 @@ namespace TetrisConsoleApp
     {
         static void Main(string[] args)
         {
-            Game game = Game.Instance;
+            Game game = new Game();
             game.Play();
         }
     }

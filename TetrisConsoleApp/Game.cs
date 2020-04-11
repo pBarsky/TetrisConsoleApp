@@ -16,19 +16,18 @@ namespace TetrisConsoleApp
     }
     class Game
     {
-        private Brick _currentBrick = new BeamBrick();
-        private Board _board = new Board();
+        private Brick _currentBrick;
+        private Board _board;
         private bool _alive = true;
         private bool _hasChanged;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
         private int _score;
         private static List<Brick> _allAvailableBricks;
         private BricksQueue _bricksQueue = new BricksQueue();
-        private static Game _instance = new Game();
 
-        public static Game Instance => _instance;
-        static Game()
+        public Game(int boardHeight = 20, int boardWidth = 10)
         {
+            _board = new Board(boardWidth, boardHeight);
             IEnumerable<Brick> bricks = typeof(Brick).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Brick)))
                 .Select(t => (Brick)Activator.CreateInstance(t));
@@ -69,6 +68,7 @@ namespace TetrisConsoleApp
             Console.Clear();
             Console.CursorVisible = false;
             PopulateQueue();
+            NextBrick();
             _alive = true;
             Stopwatch stopwatch = new Stopwatch();
             long millisecondsPassed = 0L;
