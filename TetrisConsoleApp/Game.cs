@@ -47,7 +47,7 @@ namespace TetrisConsoleApp
             for(int i = 1; i < buffer.Length; i++)
             {
                 output += buffer[i];
-                if(i < brickQueueBuffer.Length)
+                if(i <= brickQueueBuffer.Length)
                     output += '\t' + brickQueueBuffer[i - 1];
                 output += '\n';
             }
