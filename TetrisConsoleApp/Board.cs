@@ -22,10 +22,7 @@ namespace TetrisConsoleApp
                     for(int j = 0; j < _width; j++)
                     {
                         buffer[i] += tab[i, j] != 0 ? "#" : " ";
-                        //buffer[i] += tab[i, j] != 0 ? (tab[i, j] == 1 ? "+" : "#") : " ";
                     }
-
-                    //buffer[i] += "|\t" + i.ToString();
                     buffer[i] += "|";
                 }
                 return buffer;
@@ -36,16 +33,6 @@ namespace TetrisConsoleApp
             this._width = width;
             this._height = height;
             tab = new int[height, width];
-        }
-        public void Show() //TODO: delete this
-        {
-            Console.Clear();
-            for(int i = 0; i < _height; i++)
-            {
-                for(int j = 0; j < _width; j++)
-                    Console.Write(tab[i, j] != 0 ? "#" : " ");
-                Console.WriteLine("|\t" + i.ToString());
-            }
         }
 
         public void InsertBrick(Brick brick)
