@@ -6,14 +6,7 @@ using System.IO;
 
 namespace TetrisConsoleApp
 {
-    enum KeyCommand
-    {
-        Down = 0,
-        Left = 1,
-        Right = 2,
-        RotateLeft = 3,
-        None = -1
-    }
+
     class Game
     {
         private Brick _currentBrick;
@@ -77,11 +70,11 @@ namespace TetrisConsoleApp
             {
                 if(stopwatch.ElapsedMilliseconds <= 100) continue;
                 _board.ShallowClear();
-                HandleInput(GetDirection(), true);
+                HandlePlayerMovement(KeyboardHandler.GetDirection(), true);
                 if(millisecondsPassed > 1000)
                 {
                     _board.ShallowClear();
-                    HandleInput(KeyCommand.Down);
+                    HandlePlayerMovement(KeyCommand.Down);
                     millisecondsPassed = 0L;
                 }
                 if(_hasChanged)
@@ -195,30 +188,6 @@ namespace TetrisConsoleApp
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-        }
-
-        private KeyCommand GetDirection()
-        {
-            KeyCommand resultKeyCommand = KeyCommand.None;
-            while(Console.KeyAvailable)
-            {
-                switch(Console.ReadKey(true).Key)
-                {
-                    case ConsoleKey.LeftArrow:
-                        resultKeyCommand = KeyCommand.Left;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        resultKeyCommand = KeyCommand.Right;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        resultKeyCommand = KeyCommand.RotateLeft;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        resultKeyCommand = KeyCommand.Down;
-                        break;
-                }
-            }
-            return resultKeyCommand;
         }
 
         private void NextBrick()
