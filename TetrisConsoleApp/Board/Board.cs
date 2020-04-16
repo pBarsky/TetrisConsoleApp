@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TetrisConsoleApp
 {
-    public class Board
+    class Board
     {
         protected int[,] tab;
         private readonly int _width;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TetrisConsoleApp
 {
-    public abstract class Brick
+    abstract class Brick
     {
         protected int posX, posY; //polozenie klocka
         public string Name { get; }
