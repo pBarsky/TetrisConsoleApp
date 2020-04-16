@@ -91,7 +91,7 @@ namespace TetrisConsoleApp
             Console.WriteLine($"\n\nGAME OVER\n\tYOU'VE SCORED: {_score} POINTS!!");
             Console.CursorVisible = true;
             Console.WriteLine("Please enter your name: ");
-            SaveScore(Console.ReadLine());
+            ScoreboardManager.SaveScore(Console.ReadLine(), _score);
             Console.WriteLine("RETRY? (y\\n)");
             while(true)
             {
@@ -112,22 +112,6 @@ namespace TetrisConsoleApp
 
         }
 
-        private void SaveScore(string name)
-        {
-            try
-            {
-                using(var streamWriter = new StreamWriter(@".\scores.txt", true))
-                {
-                    streamWriter.WriteLine($"{name}: {_score}");
-                }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("COULD NOT SAVE SCORE TO FILE");
-                Console.WriteLine(e.Message);
-            }
-
-        }
         private void RestartGame()
         {
             _score = 0;
