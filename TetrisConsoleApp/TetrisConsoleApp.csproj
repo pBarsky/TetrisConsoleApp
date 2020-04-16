@@ -43,22 +43,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BeamBrick.cs" />
-    <Compile Include="Board.cs" />
-    <Compile Include="BoardTester.cs" />
-    <Compile Include="Brick.cs" />
-    <Compile Include="BricksQueue.cs" />
-    <Compile Include="CrossBrick.cs" />
-    <Compile Include="ElBrick.cs" />
+    <Compile Include="Bricks\BeamBrick.cs" />
+    <Compile Include="Board\Board.cs" />
+    <Compile Include="Board\BoardTester.cs" />
+    <Compile Include="Bricks\Brick.cs" />
+    <Compile Include="Bricks\BricksQueue.cs" />
+    <Compile Include="Utilities\ConsoleUtilities.cs" />
+    <Compile Include="Bricks\CrossBrick.cs" />
+    <Compile Include="Bricks\ElBrick.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Utilities\KeyboardHandler.cs" />
+    <Compile Include="AppManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SquareBrick.cs" />
-    <Compile Include="TeeBrick.cs" />
-    <Compile Include="ZigZagBrick.cs" />
+    <Compile Include="Utilities\ScoreboardManager.cs" />
+    <Compile Include="Bricks\SquareBrick.cs" />
+    <Compile Include="Bricks\TeeBrick.cs" />
+    <Compile Include="Bricks\ZigZagBrick.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

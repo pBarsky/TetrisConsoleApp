@@ -10,8 +10,11 @@ namespace TetrisConsoleApp
     {
         static void Main(string[] args)
         {
-            Game game = new Game();
-            game.Play();
+            //Game game = new Game();
+            //game.Play();
+
+            Console.WriteLine("Please press ENTER to exit...");
+            Console.ReadLine();
         }
     }
 }
