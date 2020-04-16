@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -67,7 +67,7 @@ namespace TetrisConsoleApp
         {
             Console.Clear();
             Console.CursorVisible = false;
-            PopulateQueue();
+            SeedQueue();
             NextBrick();
             _alive = true;
             Stopwatch stopwatch = new Stopwatch();
@@ -142,7 +142,7 @@ namespace TetrisConsoleApp
             Play();
         }
 
-        private void HandleInput(KeyCommand direction, bool fastForward = false)
+        private void HandlePlayerMovement(KeyCommand direction, bool fastForward = false)
         {
             switch(direction)
             {
@@ -178,7 +178,7 @@ namespace TetrisConsoleApp
                         _board.InsertBrick(_currentBrick);
                     }
                     break;
-                case KeyCommand.RotateLeft:
+                case KeyCommand.Up:
                     _currentBrick.DoRotate(false);
                     if(!_board.IsColliding(_currentBrick, 0, 0))
                     {
@@ -230,7 +230,7 @@ namespace TetrisConsoleApp
                 _alive = false;
         }
 
-        private void PopulateQueue(int size = 3)
+        private void SeedQueue(int size = 3)
         {
             for(int i = 0; i < size; i++)
                 EnqueueNewBrick();
