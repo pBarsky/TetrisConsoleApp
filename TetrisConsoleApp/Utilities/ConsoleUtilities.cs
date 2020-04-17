@@ -6,7 +6,8 @@ namespace TetrisConsoleApp
     {
         private const ConsoleColor DefaultForegroundColor = ConsoleColor.White;
         private const ConsoleColor DefaultBackgroundColor = ConsoleColor.Black;
-        public static void ColorConsoleWrite(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
+
+        public static void ColorWrite(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
         {
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;
@@ -15,9 +16,9 @@ namespace TetrisConsoleApp
             Console.BackgroundColor = DefaultBackgroundColor;
         }
 
-        public static void ColorConsoleWriteLine(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
+        public static void ColorWriteLine(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
         {
-            ColorConsoleWrite(text + '\n', foregroundColor, backgroundColor);
+            ColorWrite(text + '\n', foregroundColor, backgroundColor);
         }
 
         public static void HideCursor()
@@ -29,5 +30,6 @@ namespace TetrisConsoleApp
         {
             Console.CursorVisible = true;
         }
+
     }
 }
