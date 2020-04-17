@@ -59,8 +59,10 @@ namespace TetrisConsoleApp
                 Console.WriteLine($"{i + 1,3}.{name,-16}:{score,10}");
             }
 
-            Console.WriteLine("\nDownArrow -> scroll down");
-            Console.WriteLine("UpArrow - > scroll up");
+            Console.WriteLine($"\n{"DownArrow",-10} -> SCROLL DOWN");
+            Console.WriteLine($"{"UpArrow",-10} -> SCROLL UP");
+            Console.WriteLine($"{"ENTER",-10} -> REFRESH");
+            Console.WriteLine($"{"ESC",-10} -> BACK");
         }
 
 
@@ -83,9 +85,14 @@ namespace TetrisConsoleApp
                         _refresh = true;
                     }
                     break;
+                case KeyCommand.Enter:
+                    RefreshData();
+                    _refresh = true;
+                    break;
                 case KeyCommand.Escape:
                     _running = false;
                     break;
+
             }
         }
     }
