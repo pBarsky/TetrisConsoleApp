@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -61,9 +61,10 @@ namespace TetrisConsoleApp
         public void Play()
         {
             Console.Clear();
-            Console.CursorVisible = false;
+            ConsoleUtilities.HideCursor();
             SeedQueue();
             NextBrick();
+            Show();
             _alive = true;
             Stopwatch stopwatch = new Stopwatch();
             long millisecondsPassed = 0L;
@@ -171,10 +172,9 @@ namespace TetrisConsoleApp
                         _currentBrick.DoRotate();
                     }
                     break;
-                case KeyCommand.None:
+                case KeyCommand.Escape:
+                    _alive = false;
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
