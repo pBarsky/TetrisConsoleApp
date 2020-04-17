@@ -14,7 +14,7 @@ namespace TetrisConsoleApp
 
         private static string[] _helpStrings =
         {
-            "",
+            new string(' ', 32),
             $"{"DownArrow",-10} -> SCROLL DOWN",
             $"{"UpArrow",-10} -> SCROLL UP",
             $"{"ENTER",-10} -> REFRESH",
@@ -73,7 +73,7 @@ namespace TetrisConsoleApp
                 output += helpString + new string(' ', helpString.Length) + '\n';
             }
             // newN -> number of rows left to 'cover', so that old data doesnt remain visible
-            int newN = _records.Count - offset < 10 ? _records.Count - offset + 5 : 0;
+            int newN = _records.Count - offset < 10 ? 10 : 0;
             for(int i = 0; i < newN; i++)
                 output += new string(' ', 64) + '\n';
             Console.WriteLine(output);
