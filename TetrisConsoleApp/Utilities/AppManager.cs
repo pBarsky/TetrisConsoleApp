@@ -9,6 +9,12 @@ namespace TetrisConsoleApp
         private Game _game;
         private ScoreboardManager _scoreboardManager;
         private readonly List<Tuple<string, Action>> _menuActions = new List<Tuple<string, Action>>();
+        private readonly string[] _helpStrings = {
+            $"\n{"DownArrow",-10} -> scroll down",
+            $"{"UpArrow",-10} -> scroll up",
+            $"{"ESC",-10} -> EXIT",
+            $"{"ENTER",-10} -> select"
+        };
         public AppManager()
         {
             _game = new Game();
@@ -22,20 +28,18 @@ namespace TetrisConsoleApp
 
         protected override void Show(int index)
         {
-            Console.Clear();
             Console.SetCursorPosition(0, 3);
             for(int i = 0; i < _menuActions.Count; i++)
             {
                 if(i == index)
                     ConsoleUtilities.ColorWriteLine($"{_menuActions[i].Item1,16}", ConsoleColor.Black, ConsoleColor.White);
                 else
-                    Console.WriteLine($"{_menuActions[i].Item1,-16}");
+                    Console.WriteLine($"{_menuActions[i].Item1,-16}" + new string(' ', 20));
             }
-
-            Console.WriteLine($"\n{"DownArrow",-10} -> scroll down");
-            Console.WriteLine($"{"UpArrow",-10} -> scroll up");
-            Console.WriteLine($"{"ESC",-10} -> EXIT");
-            Console.WriteLine($"{"ENTER",-10} -> select");
+            foreach(string helpString in _helpStrings)
+            {
+                Console.WriteLine(helpString);
+            }
         }
 
         protected override void HandleInput()
@@ -54,6 +58,7 @@ namespace TetrisConsoleApp
                 case KeyCommand.Enter:
                     _refresh = true;
                     _menuActions[_offset].Item2();
+                    Console.Clear();
                     break;
                 case KeyCommand.Escape:
                     _running = false;
