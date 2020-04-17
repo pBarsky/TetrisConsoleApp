@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.IO;
+using TetrisConsoleApp.Utilities;
 
 namespace TetrisConsoleApp
 {
@@ -11,6 +11,7 @@ namespace TetrisConsoleApp
     {
         private Brick _currentBrick;
         private Board _board;
+        private ScoreWriter _scoreWriter;
         private bool _alive = true;
         private bool _hasChanged;
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
@@ -25,6 +26,7 @@ namespace TetrisConsoleApp
                 .Where(t => t.IsSubclassOf(typeof(Brick)))
                 .Select(t => (Brick)Activator.CreateInstance(t));
             _allAvailableBricks = bricks.ToList();
+            _scoreWriter = new ScoreWriter();
         }
 
         private void Show()
@@ -89,9 +91,10 @@ namespace TetrisConsoleApp
         private void GameOver()
         {
             Console.WriteLine($"\n\nGAME OVER\n\tYOU'VE SCORED: {_score} POINTS!!");
-            Console.CursorVisible = true;
+            ConsoleUtilities.ShowCursor();
             Console.WriteLine("Please enter your name: ");
-            ScoreboardManager.SaveScore(Console.ReadLine(), _score);
+            ConsoleUtilities.HideCursor();
+            _scoreWriter.SaveScore(Console.ReadLine(), _score);
             Console.WriteLine("RETRY? (y\\n)");
             while(true)
             {
