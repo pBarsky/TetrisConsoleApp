@@ -16,6 +16,7 @@ namespace TetrisConsoleApp.AbstractClasses
 
         public virtual void Run()
         {
+            Console.Clear();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             Show(0);
