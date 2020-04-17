@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +18,8 @@ namespace TetrisConsoleApp
         private int _score;
         private static List<Brick> _allAvailableBricks;
         private BricksQueue _bricksQueue = new BricksQueue();
+        private string[] _helpStrings = { $"\t{"UpArrow",-10} -> ROTATE", $"\t{"DownArrow",-10} -> GO DOWN (+1 POINT)",
+            $"\t{"LeftArrow",-10} -> MOVE LEFT", $"\t{"RightArrow",-10} -> MOVE RIGHT", $"\t{"ESC",-10} -> GIVE UP"};
 
         public Game(int boardHeight = 20, int boardWidth = 10)
         {
@@ -43,6 +45,8 @@ namespace TetrisConsoleApp
                 output += buffer[i];
                 if(i <= brickQueueBuffer.Length)
                     output += '\t' + brickQueueBuffer[i - 1];
+                if(i <= _helpStrings.Length)
+                    output += _helpStrings[i - 1];
                 output += '\n';
             }
             Console.Write(output);
