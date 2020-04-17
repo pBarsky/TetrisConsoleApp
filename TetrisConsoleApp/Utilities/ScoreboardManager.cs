@@ -12,6 +12,15 @@ namespace TetrisConsoleApp
         protected const string FilePath = @".\scores.txt";
         private const int Range = 10;
 
+        private static string[] _helpStrings =
+        {
+            "",
+            $"{"DownArrow",-10} -> SCROLL DOWN",
+            $"{"UpArrow",-10} -> SCROLL UP",
+            $"{"ENTER",-10} -> REFRESH",
+            $"{"ESC",-10} -> BACK"
+        };
+
         public ScoreboardManager(bool readData = true)
         {
             if(readData)
@@ -52,17 +61,21 @@ namespace TetrisConsoleApp
         {
             // memory wise, very bad. May fix later.
             // TODO: Implement pagination. Please, just do it.
-            Console.Clear();
+            string output = "";
+            Console.SetCursorPosition(0, 0);
             for(int i = offset; i < offset + Range && i < _records.Count; i++)
             {
                 (string name, int score) = _records[i];
-                Console.WriteLine($"{i + 1,3}.{name,-16}:{score,10}");
+                output += ($"{i + 1,3}.{name,-16}:{score,10}\n");
             }
-
-            Console.WriteLine($"\n{"DownArrow",-10} -> SCROLL DOWN");
-            Console.WriteLine($"{"UpArrow",-10} -> SCROLL UP");
-            Console.WriteLine($"{"ENTER",-10} -> REFRESH");
-            Console.WriteLine($"{"ESC",-10} -> BACK");
+            foreach(string helpString in _helpStrings)
+            {
+                output += helpString + new string(' ', Console.LargestWindowWidth / 2 - helpString.Length) + '\n';
+            }
+            int newN = _records.Count - offset < 10 ? _records.Count - offset + 5 : 0;
+            for(int i = 0; i < newN; i++)
+                output += new string(' ', 64) + '\n';
+            Console.WriteLine(output);
         }
 
 
