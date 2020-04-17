@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using TetrisConsoleApp.AbstractClasses;
 
 namespace TetrisConsoleApp
@@ -29,10 +27,15 @@ namespace TetrisConsoleApp
             for(int i = 0; i < _menuActions.Count; i++)
             {
                 if(i == index)
-                    ConsoleUtilities.ColorConsoleWriteLine($"{_menuActions[i].Item1,16}", ConsoleColor.Black, ConsoleColor.White);
+                    ConsoleUtilities.ColorWriteLine($"{_menuActions[i].Item1,16}", ConsoleColor.Black, ConsoleColor.White);
                 else
                     Console.WriteLine($"{_menuActions[i].Item1,-16}");
             }
+
+            Console.WriteLine($"\n{"DownArrow",-10} -> scroll down");
+            Console.WriteLine($"{"UpArrow",-10} -> scroll up");
+            Console.WriteLine($"{"ESC",-10} -> EXIT");
+            Console.WriteLine($"{"ENTER",-10} -> select");
         }
 
         protected override void HandleInput()
