@@ -44,5 +44,10 @@ namespace TetrisConsoleApp
         {
             return _bricksQueue.Dequeue();
         }
+
+        public void Clear()
+        {
+            _bricksQueue.Clear();
+        }
     }
 }
