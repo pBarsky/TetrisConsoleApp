@@ -70,8 +70,9 @@ namespace TetrisConsoleApp
             }
             foreach(string helpString in _helpStrings)
             {
-                output += helpString + new string(' ', Console.LargestWindowWidth / 2 - helpString.Length) + '\n';
+                output += helpString + new string(' ', helpString.Length) + '\n';
             }
+            // newN -> number of rows left to 'cover', so that old data doesnt remain visible
             int newN = _records.Count - offset < 10 ? _records.Count - offset + 5 : 0;
             for(int i = 0; i < newN; i++)
                 output += new string(' ', 64) + '\n';
