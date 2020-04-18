@@ -56,7 +56,11 @@ namespace TetrisConsoleApp
             _records = ReadScores();
         }
 
-
+        public void PrepareThenRun()
+        {
+            RefreshData();
+            Run();
+        }
         protected override void Show(int offset)
         {
             // memory wise, very bad. May fix later.

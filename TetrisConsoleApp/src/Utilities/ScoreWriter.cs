@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TetrisConsoleApp.Utilities
 {
@@ -32,7 +28,10 @@ namespace TetrisConsoleApp.Utilities
         private void SanitizeInput(ref string input)
         {
             // Removing only ':' (as for now), because i split my records using it.
+            input = input.Trim();
             input = input.Replace(":", "");
+            if(input.Length > 16)
+                input = input.Substring(0, 16);
         }
     }
 }

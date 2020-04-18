@@ -20,7 +20,7 @@ namespace TetrisConsoleApp
             _game = new Game();
             _scoreboardManager = new ScoreboardManager();
             _menuActions.Add(new Tuple<string, Action>("Play", _game.Play));
-            _menuActions.Add(new Tuple<string, Action>("Scoreboard", _scoreboardManager.Run));
+            _menuActions.Add(new Tuple<string, Action>("Scoreboard", _scoreboardManager.PrepareThenRun));
             _menuActions.Add(new Tuple<string, Action>("Exit", () => _running = false));
             _running = true;
             _refresh = true;
