@@ -7,7 +7,7 @@ namespace TetrisConsoleApp.Utilities
         private const ConsoleColor DefaultForegroundColor = ConsoleColor.White;
         private const ConsoleColor DefaultBackgroundColor = ConsoleColor.Black;
 
-        public static void ColorWrite(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
+        private static void ColorWrite(string text, ConsoleColor foregroundColor = DefaultForegroundColor, ConsoleColor backgroundColor = DefaultBackgroundColor)
         {
             Console.ForegroundColor = foregroundColor;
             Console.BackgroundColor = backgroundColor;

@@ -7,19 +7,19 @@ namespace TetrisConsoleApp.BoardManagement
     {
         public BoardTester(int width = 10, int height = 10) : base(width, height)
         {
-            prepareTestingBoard();
+            PrepareTestingBoard();
         }
 
-        private void prepareTestingBoard()
+        private void PrepareTestingBoard()
         {
-            tab[0, 5] = 2;
-            tab[1, 5] = 2;
-            tab[2, 5] = 2;
-            tab[3, 5] = 2;
-            tab[4, 5] = 2;
+            Tab[0, 5] = 2;
+            Tab[1, 5] = 2;
+            Tab[2, 5] = 2;
+            Tab[3, 5] = 2;
+            Tab[4, 5] = 2;
         }
 
-        public bool BrickCollisionTestcase1()
+        private bool BrickCollisionTestcase1()
         {
             /*
              * Should always pass. Brick is placed correctly in the left corner.
@@ -28,7 +28,7 @@ namespace TetrisConsoleApp.BoardManagement
             return !IsColliding(beamBrick, 0, 0);
         }
 
-        public bool BrickCollisionTestcase2()
+        private bool BrickCollisionTestcase2()
         {
             /*
              * Should always fail. Brick is placed way beyond the board.
@@ -37,7 +37,7 @@ namespace TetrisConsoleApp.BoardManagement
             return IsColliding(beamBrick, 0, 0);
         }
 
-        public bool BrickCollisionTestcase3()
+        private bool BrickCollisionTestcase3()
         {
             /*
              * Brick is laid on another, already laid, brick. Should fail.
@@ -48,9 +48,9 @@ namespace TetrisConsoleApp.BoardManagement
 
         public bool RunTests()
         {
-            bool result1 = BrickCollisionTestcase1();
-            bool result2 = BrickCollisionTestcase2();
-            bool result3 = BrickCollisionTestcase3();
+            var result1 = BrickCollisionTestcase1();
+            var result2 = BrickCollisionTestcase2();
+            var result3 = BrickCollisionTestcase3();
             Console.WriteLine($"Testcase1 {(result1 ? "passed" : "failed")}");
             Console.WriteLine($"Testcase2 {(result2 ? "passed" : "failed")}");
             Console.WriteLine($"Testcase3 {(result3 ? "passed" : "failed")}");

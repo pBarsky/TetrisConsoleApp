@@ -4,116 +4,167 @@ namespace TetrisConsoleApp.BoardManagement
 {
     internal class Board
     {
-        protected int[,] tab;
-        private readonly int _width;
-        private readonly int _height;
-        public int Width => _width;
-        public int Height => _height;
+        protected readonly int[,] Tab;
+        public int Width { get; }
+
+        public int Height { get; }
 
         public string[] Buffer
         {
             get
             {
-                string[] buffer = new string[_height + 1];
-                buffer[0] = buffer[_height] = " " + new string('=', _width);
-                for (int i = 1; i < _height; i++)
+                var buffer = new string[Height + 1];
+                buffer[0] = buffer[Height] = " " + new string('=', Width);
+                for (var i = 1; i < Height; i++)
                 {
                     buffer[i] += "|";
-                    for (int j = 0; j < _width; j++)
+                    for (var j = 0; j < Width; j++)
                     {
-                        buffer[i] += tab[i, j] != 0 ? "#" : " ";
+                        buffer[i] += Tab[i, j] != 0 ? "#" : " ";
                     }
+
                     buffer[i] += "|";
                 }
+
                 return buffer;
             }
         }
 
         public Board(int width = 10, int height = 20)
         {
-            this._width = width;
-            this._height = height;
-            tab = new int[height, width];
+            this.Width = width;
+            this.Height = height;
+            Tab = new int[height, width];
         }
 
         public void InsertBrick(Brick brick)
         {
-            for (int i = 0; i < brick.Height; i++)
-                for (int j = 0; j < brick.Width; j++)
+            for (var i = 0; i < brick.Height; i++)
+            {
+                for (var j = 0; j < brick.Width; j++)
+                {
                     if (brick.Shape[i, j] != 0)
-                        tab[brick.PosY + i, brick.PosX + j] = brick.Shape[i, j];
+                    {
+                        Tab[brick.PosY + i, brick.PosX + j] = brick.Shape[i, j];
+                    }
+                }
+            }
         }
 
         public void DeepClear()
         {
-            for (int i = 0; i < _height; i++)
-                for (int j = 0; j < _width; j++)
-                    tab[i, j] = 0;
+            for (var i = 0; i < Height; i++)
+            {
+                {
+                    for (var j = 0; j < Width; j++)
+                    {
+                        Tab[i, j] = 0;
+                    }
+                }
+            }
         }
 
         public void ShallowClear()
         {
-            for (int i = 0; i < _height; i++)
-                for (int j = 0; j < _width; j++)
-                    if (tab[i, j] == 1)
-                        tab[i, j] = 0;
+            for (var i = 0; i < Height; i++)
+            {
+                for (var j = 0; j < Width; j++)
+                {
+                    if (Tab[i, j] == 1)
+                    {
+                        Tab[i, j] = 0;
+                    }
+                }
+            }
         }
 
         public bool IsColliding(Brick brick, int offsetX, int offsetY)
         {
-            for (int i = 0; i < brick.Height; i++)
-                for (int j = 0; j < brick.Width; j++)
+            for (var i = 0; i < brick.Height; i++)
+            {
+                for (var j = 0; j < brick.Width; j++)
                 {
-                    if (brick.Shape[i, j] != 1) continue;
-                    if (i + brick.PosY + offsetY < 0 ||
-                       i + brick.PosY + offsetY >= _height ||
-                       j + brick.PosX + offsetX < 0 ||
-                       j + brick.PosX + offsetX >= _width ||
-                       tab[brick.PosY + offsetY + i, brick.PosX + offsetX + j] == 2)
+                    if (brick.Shape[i, j] != 1)
+                    {
+                        continue;
+                    }
+
+                    if (IsBrickColliding(brick, offsetX, offsetY, i, j))
+                    {
                         return true;
+                    }
                 }
+            }
+
             return false;
+        }
+
+        private bool IsBrickColliding(Brick brick, int offsetX, int offsetY, int i, int j)
+        {
+            return i + brick.PosY + offsetY < 0 ||
+                   i + brick.PosY + offsetY >= Height ||
+                   j + brick.PosX + offsetX < 0 ||
+                   j + brick.PosX + offsetX >= Width ||
+                   Tab[brick.PosY + offsetY + i, brick.PosX + offsetX + j] == 2;
         }
 
         public void FreezeBrick(Brick brick)
         {
-            for (int i = 0; i < brick.Height; i++)
-                for (int j = 0; j < brick.Width; j++)
+            for (var i = 0; i < brick.Height; i++)
+            {
+                for (var j = 0; j < brick.Width; j++)
+                {
                     if (brick.Shape[i, j] != 0)
-                        tab[brick.PosY + i, brick.PosX + j] = 2;
+                    {
+                        Tab[brick.PosY + i, brick.PosX + j] = 2;
+                    }
+                }
+            }
         }
 
-        public int CheckBoard()
+        private int CheckBoard()
         {
-            int counter = 0;
-            for (int i = 0; i < _height; i++)
+            var counter = 0;
+            for (var i = 0; i < Height; i++)
             {
-                for (int j = 0; j < _width; j++)
+                for (var j = 0; j < Width; j++)
                 {
-                    if (tab[i, j] != 2)
+                    if (Tab[i, j] != 2)
+                    {
                         break;
+                    }
                     counter++;
                 }
-                if (counter == _width)
+
+                if (counter == Width)
+                {
                     return i;
+                }
                 counter = 0;
             }
+
             return -1;
         }
 
         public int Gravitate(int multiplier = 10)
         {
-            int level = CheckBoard();
-            int score = 1;
+            var level = CheckBoard();
+            var score = 1;
             while (level != -1)
             {
-                for (int i = level - 1; i >= 0; i--)
-                    for (int j = 0; j < _width; j++)
-                        tab[i + 1, j] = tab[i, j];
+                for (var i = level - 1; i >= 0; i--)
+                {
+                    for (var j = 0; j < Width; j++)
+                    {
+                        Tab[i + 1, j] = Tab[i, j];
+                    }
+                }
+
                 level = CheckBoard();
                 score *= multiplier;
                 multiplier++;
             }
+
             return score;
         }
     }

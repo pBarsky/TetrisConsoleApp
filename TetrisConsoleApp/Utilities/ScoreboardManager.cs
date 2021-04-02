@@ -12,7 +12,7 @@ namespace TetrisConsoleApp.Utilities
         protected const string FilePath = @".\scores.txt";
         private const int Range = 10;
 
-        private static string[] _helpStrings =
+        private static readonly string[] HelpStrings =
         {
             new string(' ', 32),
             $"{"DownArrow",-10} -> SCROLL DOWN",
@@ -25,7 +25,7 @@ namespace TetrisConsoleApp.Utilities
         {
             if (readData)
                 RefreshData();
-            _running = true;
+            Running = true;
         }
 
         private List<Tuple<string, int>> ReadScores(bool sorted = true)
@@ -33,11 +33,11 @@ namespace TetrisConsoleApp.Utilities
             var scores = new List<Tuple<string, int>>();
             try
             {
-                string[] lines = File.ReadAllLines(FilePath);
+                var lines = File.ReadAllLines(FilePath);
                 foreach (string line in lines)
                 {
-                    string[] keyVal = line.Split(':');
-                    scores.Add(new Tuple<string, int>(keyVal[0], int.TryParse(keyVal[1], out int score) ? score : 0));
+                    var keyVal = line.Split(':');
+                    scores.Add(new Tuple<string, int>(keyVal[0], int.TryParse(keyVal[1], out var score) ? score : 0));
                 }
             }
             catch (IOException e)
@@ -45,6 +45,7 @@ namespace TetrisConsoleApp.Utilities
                 Console.WriteLine("COULD NOT OPEN SCORES FILE.");
                 Console.WriteLine(e.Message);
             }
+
             if (!sorted) return scores;
             var scoreSorting = scores.OrderByDescending(row => row.Item2);
             return scoreSorting.ToList();
@@ -63,24 +64,45 @@ namespace TetrisConsoleApp.Utilities
 
         protected override void Show(int offset)
         {
-            // memory wise, very bad. May fix later.
-            // TODO: Implement pagination. Please, just do it.
-            string output = "";
+            var output = "";
             Console.SetCursorPosition(0, 0);
-            for (int i = offset; i < offset + Range && i < _records.Count; i++)
+            output = PrintRecords(offset, output);
+            output = PrintHelpStringsForRecords(output);
+            output = CoverOldOutput(offset, output);
+
+            Console.WriteLine(output);
+        }
+
+        private string CoverOldOutput(int offset, string output)
+        {
+            var rowsLeftToCover = _records.Count - offset < 10 ? 10 : 0;
+            for (var i = 0; i < rowsLeftToCover; i++)
             {
-                (string name, int score) = _records[i];
-                output += ($"{i + 1,3}.{name,-16}:{score,10}\n");
+                output += new string(' ', 64) + '\n';
             }
-            foreach (string helpString in _helpStrings)
+
+            return output;
+        }
+
+        private static string PrintHelpStringsForRecords(string output)
+        {
+            foreach (var helpString in HelpStrings)
             {
                 output += helpString + new string(' ', helpString.Length) + '\n';
             }
-            // newN -> number of rows left to 'cover', so that old data doesnt remain visible
-            int newN = _records.Count - offset < 10 ? 10 : 0;
-            for (int i = 0; i < newN; i++)
-                output += new string(' ', 64) + '\n';
-            Console.WriteLine(output);
+
+            return output;
+        }
+
+        private string PrintRecords(int offset, string output)
+        {
+            for (var i = offset; i < offset + Range && i < _records.Count; i++)
+            {
+                var (name, score) = _records[i];
+                output += ($"{i + 1,3}.{name,-16}:{score,10}\n");
+            }
+
+            return output;
         }
 
         protected override void HandleInput()
@@ -89,30 +111,36 @@ namespace TetrisConsoleApp.Utilities
             switch (key)
             {
                 case KeyCommand.Down:
-                    if (_offset + Range < _records.Count)
-                    {
-                        _offset += Range;
-                        _refresh = true;
-                    }
+                    HandleDownPress();
                     break;
 
                 case KeyCommand.Up:
-                    if (_offset - Range >= 0)
-                    {
-                        _offset -= Range;
-                        _refresh = true;
-                    }
+                    HandleUpPress();
                     break;
 
                 case KeyCommand.Enter:
                     RefreshData();
-                    _refresh = true;
+                    Refresh = true;
                     break;
 
                 case KeyCommand.Escape:
-                    _running = false;
+                    Running = false;
                     break;
             }
+        }
+
+        private void HandleUpPress()
+        {
+            if (Offset - Range < 0) return;
+            Offset -= Range;
+            Refresh = true;
+        }
+
+        private void HandleDownPress()
+        {
+            if (Offset + Range >= _records.Count) return;
+            Offset += Range;
+            Refresh = true;
         }
     }
 }

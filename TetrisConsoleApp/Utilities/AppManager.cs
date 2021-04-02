@@ -24,24 +24,34 @@ namespace TetrisConsoleApp.Utilities
             _scoreboardManager = new ScoreboardManager();
             _menuActions.Add(new Tuple<string, Action>("Play", _game.Play));
             _menuActions.Add(new Tuple<string, Action>("Scoreboard", _scoreboardManager.PrepareThenRun));
-            _menuActions.Add(new Tuple<string, Action>("Exit", () => _running = false));
-            _running = true;
-            _refresh = true;
+            _menuActions.Add(new Tuple<string, Action>("Exit", () => Running = false));
+            Running = true;
+            Refresh = true;
         }
 
         protected override void Show(int index)
         {
             Console.SetCursorPosition(0, 3);
-            for (int i = 0; i < _menuActions.Count; i++)
+            PrintMenuActions(index);
+            PrintHelpStrings();
+        }
+
+        private void PrintHelpStrings()
+        {
+            foreach (var helpString in _helpStrings)
+            {
+                Console.WriteLine(helpString);
+            }
+        }
+
+        private void PrintMenuActions(int index)
+        {
+            for (var i = 0; i < _menuActions.Count; i++)
             {
                 if (i == index)
                     ConsoleUtilities.ColorWriteLine($"{_menuActions[i].Item1,16}", ConsoleColor.Black, ConsoleColor.White);
                 else
                     Console.WriteLine($"{_menuActions[i].Item1,-16}" + new string(' ', 20));
-            }
-            foreach (string helpString in _helpStrings)
-            {
-                Console.WriteLine(helpString);
             }
         }
 
@@ -51,23 +61,23 @@ namespace TetrisConsoleApp.Utilities
             switch (key)
             {
                 case KeyCommand.Down:
-                    _refresh = true;
-                    _offset = ++_offset % _menuActions.Count;
+                    Refresh = true;
+                    Offset = ++Offset % _menuActions.Count;
                     break;
 
                 case KeyCommand.Up:
-                    _refresh = true;
-                    _offset = _offset == 0 ? _menuActions.Count - 1 : --_offset % _menuActions.Count;
+                    Refresh = true;
+                    Offset = Offset == 0 ? _menuActions.Count - 1 : --Offset % _menuActions.Count;
                     break;
 
                 case KeyCommand.Enter:
-                    _refresh = true;
-                    _menuActions[_offset].Item2();
+                    Refresh = true;
+                    _menuActions[Offset].Item2();
                     Console.Clear();
                     break;
 
                 case KeyCommand.Escape:
-                    _running = false;
+                    Running = false;
                     break;
             }
         }

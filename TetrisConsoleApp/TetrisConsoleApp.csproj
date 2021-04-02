@@ -82,6 +82,7 @@
     <Compile Include="BoardManagement\BoardTester.cs" />
     <Compile Include="AbstractClasses\Brick.cs" />
     <Compile Include="Bricks\BricksQueue.cs" />
+    <Compile Include="Gameplay\InputHandler.cs" />
     <Compile Include="Utilities\ConsoleUtilities.cs" />
     <Compile Include="Bricks\ElBrick.cs" />
     <Compile Include="Gameplay\Game.cs" />

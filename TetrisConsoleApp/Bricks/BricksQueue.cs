@@ -6,20 +6,20 @@ namespace TetrisConsoleApp.Bricks
 {
     internal class BricksQueue
     {
-        private Queue<Brick> _bricksQueue;
+        private readonly Queue<Brick> _bricksQueue;
 
         public string[] Buffer
         {
             get
             {
-                int height = _bricksQueue.Sum(brick => brick.Height) + _bricksQueue.Count;
-                string[] buffer = new string[height];
-                int lineCounter = 0;
-                int brickCounter = 0;
-                foreach (Brick brick in _bricksQueue)
+                var height = _bricksQueue.Sum(brick => brick.Height) + _bricksQueue.Count;
+                var buffer = new string[height];
+                var lineCounter = 0;
+                var brickCounter = 0;
+                foreach (var brick in _bricksQueue)
                 {
                     buffer[lineCounter++] = $"Brick {++brickCounter}.:";
-                    foreach (string s in brick.Buffer)
+                    foreach (var s in brick.Buffer)
                     {
                         buffer[lineCounter++] = '\t' + s;
                     }

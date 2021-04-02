@@ -11,15 +11,16 @@ namespace TetrisConsoleApp.Gameplay
 {
     internal class Game
     {
-        private Brick _currentBrick;
-        private readonly Board _board;
+        public Brick CurrentBrick { get; private set; }
+        public Board CurrentBoard { get; }
         private readonly ScoreWriter _scoreWriter;
-        private bool _alive = true;
-        private bool _hasChanged;
+        private bool Alive { get; set; } = true;
+        public bool HasChanged { get; set; }
         private readonly Random _random = new Random(DateTime.Now.Millisecond);
-        private int _score;
+        public int Score { get; set; }
         private static List<Brick> _allAvailableBricks;
         private readonly BricksQueue _bricksQueue = new BricksQueue();
+        private readonly InputHandler _inputHandler;
 
         private readonly string[] _helpStrings =
         {
@@ -32,7 +33,8 @@ namespace TetrisConsoleApp.Gameplay
 
         public Game(int boardHeight = 20, int boardWidth = 10)
         {
-            _board = new Board(boardWidth, boardHeight);
+            _inputHandler = new InputHandler(this);
+            CurrentBoard = new Board(boardWidth, boardHeight);
             var bricks = typeof(Brick).Assembly.GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(Brick)))
                 .Select(t => (Brick)Activator.CreateInstance(t));
@@ -51,10 +53,9 @@ namespace TetrisConsoleApp.Gameplay
         private string PrepareOutput()
         {
             var output = string.Empty;
-            var buffer = _board.Buffer;
+            var buffer = CurrentBoard.Buffer;
             var brickQueueBuffer = _bricksQueue.Buffer;
-            buffer[0] += $"\tScore: {_score}\n";
-            ;
+            buffer[0] += $"\tScore: {Score}\n";
             for (var i = 1; i < buffer.Length; i++)
             {
                 output += buffer[i];
@@ -71,9 +72,9 @@ namespace TetrisConsoleApp.Gameplay
         private void ClearBricksQueueBuffer()
         {
             var clearLine = new string(' ', 20);
-            for (var i = 1; i < _board.Height; i++)
+            for (var i = 1; i < CurrentBoard.Height; i++)
             {
-                Console.SetCursorPosition(_board.Width + 2, 1 + i);
+                Console.SetCursorPosition(CurrentBoard.Width + 2, 1 + i);
                 Console.Write(clearLine);
             }
         }
@@ -85,7 +86,7 @@ namespace TetrisConsoleApp.Gameplay
             SeedQueue();
             NextBrick();
             Show();
-            _alive = true;
+            Alive = true;
             GameLoop();
             GameOver();
         }
@@ -95,21 +96,21 @@ namespace TetrisConsoleApp.Gameplay
             var stopwatch = new Stopwatch();
             var millisecondsPassed = 0L;
             stopwatch.Start();
-            while (_alive)
+            while (Alive)
             {
                 if (stopwatch.ElapsedMilliseconds <= 100) continue;
-                _board.ShallowClear();
-                HandlePlayerMovement(KeyboardHandler.GetDirection(), true);
+                CurrentBoard.ShallowClear();
+                _inputHandler.HandlePlayerMovement(KeyboardHandler.GetDirection(), true);
                 if (millisecondsPassed > 1000)
                 {
-                    _board.ShallowClear();
-                    HandlePlayerMovement(KeyCommand.Down);
+                    CurrentBoard.ShallowClear();
+                    _inputHandler.HandlePlayerMovement(KeyCommand.Down);
                     millisecondsPassed = 0L;
                 }
 
-                if (_hasChanged)
+                if (HasChanged)
                     Show();
-                _hasChanged = false;
+                HasChanged = false;
                 millisecondsPassed += stopwatch.ElapsedMilliseconds;
                 stopwatch.Restart();
             }
@@ -117,144 +118,42 @@ namespace TetrisConsoleApp.Gameplay
 
         private void GameOver()
         {
-            Console.WriteLine($"\n\nGAME OVER\n\tYOU'VE SCORED: {_score} POINTS!!");
+            Console.WriteLine($"\n\nGAME OVER\n\tYOU'VE SCORED: {Score} POINTS!!");
             ConsoleUtilities.ShowCursor();
             Console.WriteLine("Please enter your name: ");
             ConsoleUtilities.HideCursor();
-            _scoreWriter.SaveScore(Console.ReadLine(), _score);
+            _scoreWriter.SaveScore(Console.ReadLine(), Score);
             Console.WriteLine("RETRY? (y\\n)");
             GameOverInputLoop();
-            return;
         }
 
         private void GameOverInputLoop()
         {
-            while (HandleGameOverInput())
+            while (_inputHandler.HandleGameOverInput())
             {
             }
         }
 
-        private bool HandleGameOverInput()
+        public void RestartGame()
         {
-            var key = Console.ReadKey(true).Key;
-            switch (key)
-            {
-                case ConsoleKey.Y:
-                    RestartGame();
-                    break;
-
-                case ConsoleKey.N:
-                case ConsoleKey.Escape:
-                    return true;
-
-                default:
-                    Console.WriteLine("RETRY? (y\\n)");
-                    break;
-            }
-
-            return false;
-        }
-
-        private void RestartGame()
-        {
-            _score = 0;
-            _board.DeepClear();
+            Score = 0;
+            CurrentBoard.DeepClear();
             _bricksQueue.Clear();
             Play();
         }
 
-        private void HandlePlayerMovement(KeyCommand direction, bool fastForward = false)
+        public void Suicide()
         {
-            switch (direction)
-            {
-                case KeyCommand.Down:
-                    HandleDownKeyPress(fastForward);
-                    break;
-
-                case KeyCommand.Left:
-                    HandleLeftKeyPress();
-                    break;
-
-                case KeyCommand.Right:
-                    HandleRightKeyPress();
-                    break;
-
-                case KeyCommand.Up:
-                    HandleUpKeyPress();
-                    break;
-
-                case KeyCommand.Escape:
-                    Suicide();
-                    break;
-            }
+            Alive = false;
         }
 
-        private void Suicide()
+        public void NextBrick()
         {
-            _alive = false;
-        }
-
-        private void HandleUpKeyPress()
-        {
-            _currentBrick.DoRotate(false);
-            if (_board.IsColliding(_currentBrick, 0, 0))
-            {
-                _currentBrick.DoRotate();
-                return;
-            }
-
-            _hasChanged = true;
-            _board.InsertBrick(_currentBrick);
-        }
-
-        private void HandleRightKeyPress()
-        {
-            if (_board.IsColliding(_currentBrick, 1, 0))
-            {
-                return;
-            }
-
-            _hasChanged = true;
-            _currentBrick.MoveRight();
-            _board.InsertBrick(_currentBrick);
-        }
-
-        private void HandleLeftKeyPress()
-        {
-            if (_board.IsColliding(_currentBrick, -1, 0))
-            {
-                return;
-            }
-
-            _hasChanged = true;
-            _currentBrick.MoveLeft();
-            _board.InsertBrick(_currentBrick);
-        }
-
-        private void HandleDownKeyPress(bool fastForward)
-        {
-            if (_board.IsColliding(_currentBrick, 0, 1))
-            {
-                _board.FreezeBrick(_currentBrick);
-                _score += _board.Gravitate(_board.Width);
-                NextBrick();
-                return;
-            }
-
-            _hasChanged = true;
-            _currentBrick.MoveDown();
-            if (fastForward)
-                _score += 1;
-            _board.InsertBrick(_currentBrick);
-        }
-
-        private void NextBrick()
-        {
-            _currentBrick = _bricksQueue.Dequeue();
+            CurrentBrick = _bricksQueue.Dequeue();
             EnqueueNewBrick();
-            _currentBrick.RestartPosition(_random.Next(_board.Width - _currentBrick.Width));
-            if (_board.IsColliding(_currentBrick, 0, 0))
-                _alive = false;
+            CurrentBrick.RestartPosition(_random.Next(CurrentBoard.Width - CurrentBrick.Width));
+            if (CurrentBoard.IsColliding(CurrentBrick, 0, 0))
+                Alive = false;
         }
 
         private void SeedQueue(int size = 3)

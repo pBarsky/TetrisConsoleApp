@@ -6,30 +6,30 @@ namespace TetrisConsoleApp.AbstractClasses
 {
     internal abstract class ControllableMenu
     {
-        protected bool _running;
-        protected bool _refresh;
-        protected int _offset;
+        protected bool Running;
+        protected bool Refresh;
+        protected int Offset;
 
         protected abstract void Show(int param);
 
-        public virtual void Run()
+        public void Run()
         {
             Console.Clear();
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             Show(0);
             ConsoleUtilities.HideCursor();
-            _offset = 0;
-            _running = true;
-            while (_running)
+            Offset = 0;
+            Running = true;
+            while (Running)
             {
                 if (stopwatch.ElapsedMilliseconds < 50) continue;
 
                 HandleInput();
-                if (_refresh)
+                if (Refresh)
                 {
-                    Show(_offset);
-                    _refresh = false;
+                    Show(Offset);
+                    Refresh = false;
                 }
                 stopwatch.Restart();
             }
