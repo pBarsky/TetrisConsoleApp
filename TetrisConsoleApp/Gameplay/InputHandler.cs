@@ -23,14 +23,14 @@ namespace TetrisConsoleApp.Gameplay
 
                 case ConsoleKey.N:
                 case ConsoleKey.Escape:
-                    return true;
+                    return false;
 
                 default:
                     Console.WriteLine("RETRY? (y\\n)");
                     break;
             }
 
-            return false;
+            return true;
         }
 
         public void HandlePlayerMovement(KeyCommand direction, bool fastForward = false)
