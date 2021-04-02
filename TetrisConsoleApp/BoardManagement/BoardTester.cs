@@ -1,8 +1,9 @@
 ﻿using System;
+using TetrisConsoleApp.Bricks;
 
-namespace TetrisConsoleApp
+namespace TetrisConsoleApp.BoardManagement
 {
-    class BoardTester : Board
+    internal class BoardTester : Board
     {
         public BoardTester(int width = 10, int height = 10) : base(width, height)
         {
@@ -26,6 +27,7 @@ namespace TetrisConsoleApp
             BeamBrick beamBrick = new BeamBrick();
             return !IsColliding(beamBrick, 0, 0);
         }
+
         public bool BrickCollisionTestcase2()
         {
             /*

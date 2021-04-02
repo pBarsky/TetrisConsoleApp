@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TetrisConsoleApp
+namespace TetrisConsoleApp.Utilities
 {
-    static class ConsoleUtilities
+    internal static class ConsoleUtilities
     {
         private const ConsoleColor DefaultForegroundColor = ConsoleColor.White;
         private const ConsoleColor DefaultBackgroundColor = ConsoleColor.Black;
@@ -30,6 +30,5 @@ namespace TetrisConsoleApp
         {
             Console.CursorVisible = true;
         }
-
     }
 }

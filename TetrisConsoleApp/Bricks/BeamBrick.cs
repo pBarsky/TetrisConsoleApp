@@ -1,10 +1,12 @@
-﻿namespace TetrisConsoleApp
+﻿using TetrisConsoleApp.AbstractClasses;
+
+namespace TetrisConsoleApp.Bricks
 {
-    class BeamBrick : Brick
+    internal class BeamBrick : Brick
     {
         public BeamBrick(int size = 3, int x = 0, int y = 0) : base(size, "BeamBrick", x, y)
         {
-            for(int i = 0; i < size; i++)
+            for (int i = 0; i < size; i++)
                 shape[size / 2, i] = 1;
         }
 

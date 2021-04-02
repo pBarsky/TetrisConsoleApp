@@ -1,6 +1,8 @@
-﻿namespace TetrisConsoleApp
+﻿using TetrisConsoleApp.AbstractClasses;
+
+namespace TetrisConsoleApp.Bricks
 {
-    class ZigZagBrick : Brick
+    internal class ZigZagBrick : Brick
     {
         public ZigZagBrick(int size = 3, int posX = 0, int posY = 0) : base(size, "ZigZagBrick", posX, posY)
         {
@@ -9,6 +11,7 @@
             shape[1, 1] = 1;
             shape[1, 2] = 1;
         }
+
         public ZigZagBrick() : this(3, 0, 0)
         {
         }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TetrisConsoleApp
+namespace TetrisConsoleApp.AbstractClasses
 {
-    abstract class Brick
+    internal abstract class Brick
     {
         protected int posX, posY; //polozenie klocka
         public string Name { get; }
@@ -14,13 +14,15 @@ namespace TetrisConsoleApp
         public int Height => shape.GetLength(0);
         public int Width => shape.GetLength(1);
 
-        public string[] Buffer {
-            get {
+        public string[] Buffer
+        {
+            get
+            {
                 string[] buffer = new string[Height];
-                for(int i = 0; i < Height; i++)
+                for (int i = 0; i < Height; i++)
                 {
                     buffer[i] = "";
-                    for(int j = 0; j < Width; j++)
+                    for (int j = 0; j < Width; j++)
                         buffer[i] += shape[i, j] == 1 ? '#' : ' ';
                 }
                 return buffer;
@@ -39,22 +41,22 @@ namespace TetrisConsoleApp
         {
             int size = shape.GetLength(0);
             int[,] result = new int[size, size];
-            if(!clockDirection)
-                for(int i = 0; i < size; i++)
-                    for(int j = 0; j < size; j++)
+            if (!clockDirection)
+                for (int i = 0; i < size; i++)
+                    for (int j = 0; j < size; j++)
                         result[size - 1 - j, i] = shape[i, j];
             else
-                for(int i = 0; i < size; i++)
-                    for(int j = size - 1; j >= 0; j--)
+                for (int i = 0; i < size; i++)
+                    for (int j = size - 1; j >= 0; j--)
                         result[i, size - 1 - j] = shape[j, i];
             return result;
         }
 
         public void ShowBrick()
         {
-            for(int i = 0; i < Height; i++)
+            for (int i = 0; i < Height; i++)
             {
-                for(int j = 0; j < Width; j++)
+                for (int j = 0; j < Width; j++)
                     Console.Write(shape[i, j]);
                 Console.Write("\n");
             }
@@ -74,10 +76,12 @@ namespace TetrisConsoleApp
         {
             Move(-1, 0);
         }
+
         public void MoveRight()
         {
             Move(1, 0);
         }
+
         private void Move(int offsetX, int offsetY)
         {
             posX += offsetX;
