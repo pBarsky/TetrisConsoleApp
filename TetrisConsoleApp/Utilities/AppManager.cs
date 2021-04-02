@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using TetrisConsoleApp.AbstractClasses;
+using TetrisConsoleApp.Gameplay;
 
 namespace TetrisConsoleApp.Utilities
 {
     internal class AppManager : ControllableMenu
     {
-        private Game _game;
-        private ScoreboardManager _scoreboardManager;
+        private readonly Game _game;
+        private readonly ScoreboardManager _scoreboardManager;
         private readonly List<Tuple<string, Action>> _menuActions = new List<Tuple<string, Action>>();
 
         private readonly string[] _helpStrings = {

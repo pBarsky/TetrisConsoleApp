@@ -7,7 +7,7 @@ using TetrisConsoleApp.BoardManagement;
 using TetrisConsoleApp.Bricks;
 using TetrisConsoleApp.Utilities;
 
-namespace TetrisConsoleApp
+namespace TetrisConsoleApp.Gameplay
 {
     internal class Game
     {
@@ -21,7 +21,8 @@ namespace TetrisConsoleApp
         private static List<Brick> _allAvailableBricks;
         private readonly BricksQueue _bricksQueue = new BricksQueue();
 
-        private readonly string[] _helpStrings = {
+        private readonly string[] _helpStrings =
+        {
             $"\t{"UpArrow",-10} -> ROTATE",
             $"\t{"DownArrow",-10} -> GO DOWN (+1 POINT)",
             $"\t{"LeftArrow",-10} -> MOVE LEFT",
@@ -41,14 +42,20 @@ namespace TetrisConsoleApp
 
         private void Show()
         {
-            string output = string.Empty;
-            string[] buffer = _board.Buffer;
-            string[] brickQueueBuffer = _bricksQueue.Buffer;
-            buffer[0] += $"\tScore: {_score}\n";
-            output += buffer[0];
             ClearBricksQueueBuffer();
             Console.SetCursorPosition(0, 0);
-            for (int i = 1; i < buffer.Length; i++)
+            var output = PrepareOutput();
+            Console.Write(output);
+        }
+
+        private string PrepareOutput()
+        {
+            var output = string.Empty;
+            var buffer = _board.Buffer;
+            var brickQueueBuffer = _bricksQueue.Buffer;
+            buffer[0] += $"\tScore: {_score}\n";
+            ;
+            for (var i = 1; i < buffer.Length; i++)
             {
                 output += buffer[i];
                 if (i <= brickQueueBuffer.Length)
@@ -57,13 +64,14 @@ namespace TetrisConsoleApp
                     output += _helpStrings[i - 1];
                 output += '\n';
             }
-            Console.Write(output);
+
+            return output;
         }
 
         private void ClearBricksQueueBuffer()
         {
-            string clearLine = new string(' ', 20);
-            for (int i = 1; i < _board.Height; i++)
+            var clearLine = new string(' ', 20);
+            for (var i = 1; i < _board.Height; i++)
             {
                 Console.SetCursorPosition(_board.Width + 2, 1 + i);
                 Console.Write(clearLine);
@@ -78,8 +86,14 @@ namespace TetrisConsoleApp
             NextBrick();
             Show();
             _alive = true;
-            Stopwatch stopwatch = new Stopwatch();
-            long millisecondsPassed = 0L;
+            GameLoop();
+            GameOver();
+        }
+
+        private void GameLoop()
+        {
+            var stopwatch = new Stopwatch();
+            var millisecondsPassed = 0L;
             stopwatch.Start();
             while (_alive)
             {
@@ -92,13 +106,13 @@ namespace TetrisConsoleApp
                     HandlePlayerMovement(KeyCommand.Down);
                     millisecondsPassed = 0L;
                 }
+
                 if (_hasChanged)
                     Show();
                 _hasChanged = false;
                 millisecondsPassed += stopwatch.ElapsedMilliseconds;
                 stopwatch.Restart();
             }
-            GameOver();
         }
 
         private void GameOver()
@@ -109,24 +123,36 @@ namespace TetrisConsoleApp
             ConsoleUtilities.HideCursor();
             _scoreWriter.SaveScore(Console.ReadLine(), _score);
             Console.WriteLine("RETRY? (y\\n)");
-            while (true)
+            GameOverInputLoop();
+            return;
+        }
+
+        private void GameOverInputLoop()
+        {
+            while (HandleGameOverInput())
             {
-                var key = Console.ReadKey(true).Key;
-                switch (key)
-                {
-                    case ConsoleKey.Y:
-                        RestartGame();
-                        break;
-
-                    case ConsoleKey.N:
-                    case ConsoleKey.Escape:
-                        return;
-
-                    default:
-                        Console.WriteLine("RETRY? (y\\n)");
-                        break;
-                }
             }
+        }
+
+        private bool HandleGameOverInput()
+        {
+            var key = Console.ReadKey(true).Key;
+            switch (key)
+            {
+                case ConsoleKey.Y:
+                    RestartGame();
+                    break;
+
+                case ConsoleKey.N:
+                case ConsoleKey.Escape:
+                    return true;
+
+                default:
+                    Console.WriteLine("RETRY? (y\\n)");
+                    break;
+            }
+
+            return false;
         }
 
         private void RestartGame()
@@ -142,57 +168,84 @@ namespace TetrisConsoleApp
             switch (direction)
             {
                 case KeyCommand.Down:
-                    if (!_board.IsColliding(_currentBrick, 0, 1))
-                    {
-                        _hasChanged = true;
-                        _currentBrick.MoveDown();
-                        if (fastForward)
-                            _score += 1;
-                        _board.InsertBrick(_currentBrick);
-                    }
-                    else
-                    {
-                        _board.FreezeBrick(_currentBrick);
-                        _score += _board.Gravitate(_board.Width);
-                        NextBrick();
-                    }
+                    HandleDownKeyPress(fastForward);
                     break;
 
                 case KeyCommand.Left:
-                    if (!_board.IsColliding(_currentBrick, -1, 0))
-                    {
-                        _hasChanged = true;
-                        _currentBrick.MoveLeft();
-                        _board.InsertBrick(_currentBrick);
-                    }
+                    HandleLeftKeyPress();
                     break;
 
                 case KeyCommand.Right:
-                    if (!_board.IsColliding(_currentBrick, 1, 0))
-                    {
-                        _hasChanged = true;
-                        _currentBrick.MoveRight();
-                        _board.InsertBrick(_currentBrick);
-                    }
+                    HandleRightKeyPress();
                     break;
 
                 case KeyCommand.Up:
-                    _currentBrick.DoRotate(false);
-                    if (!_board.IsColliding(_currentBrick, 0, 0))
-                    {
-                        _hasChanged = true;
-                        _board.InsertBrick(_currentBrick);
-                    }
-                    else
-                    {
-                        _currentBrick.DoRotate();
-                    }
+                    HandleUpKeyPress();
                     break;
 
                 case KeyCommand.Escape:
-                    _alive = false;
+                    Suicide();
                     break;
             }
+        }
+
+        private void Suicide()
+        {
+            _alive = false;
+        }
+
+        private void HandleUpKeyPress()
+        {
+            _currentBrick.DoRotate(false);
+            if (_board.IsColliding(_currentBrick, 0, 0))
+            {
+                _currentBrick.DoRotate();
+                return;
+            }
+
+            _hasChanged = true;
+            _board.InsertBrick(_currentBrick);
+        }
+
+        private void HandleRightKeyPress()
+        {
+            if (_board.IsColliding(_currentBrick, 1, 0))
+            {
+                return;
+            }
+
+            _hasChanged = true;
+            _currentBrick.MoveRight();
+            _board.InsertBrick(_currentBrick);
+        }
+
+        private void HandleLeftKeyPress()
+        {
+            if (_board.IsColliding(_currentBrick, -1, 0))
+            {
+                return;
+            }
+
+            _hasChanged = true;
+            _currentBrick.MoveLeft();
+            _board.InsertBrick(_currentBrick);
+        }
+
+        private void HandleDownKeyPress(bool fastForward)
+        {
+            if (_board.IsColliding(_currentBrick, 0, 1))
+            {
+                _board.FreezeBrick(_currentBrick);
+                _score += _board.Gravitate(_board.Width);
+                NextBrick();
+                return;
+            }
+
+            _hasChanged = true;
+            _currentBrick.MoveDown();
+            if (fastForward)
+                _score += 1;
+            _board.InsertBrick(_currentBrick);
         }
 
         private void NextBrick()
@@ -206,7 +259,7 @@ namespace TetrisConsoleApp
 
         private void SeedQueue(int size = 3)
         {
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
                 EnqueueNewBrick();
         }
 

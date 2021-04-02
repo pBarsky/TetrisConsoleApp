@@ -84,7 +84,7 @@
     <Compile Include="Bricks\BricksQueue.cs" />
     <Compile Include="Utilities\ConsoleUtilities.cs" />
     <Compile Include="Bricks\ElBrick.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="Gameplay\Game.cs" />
     <Compile Include="Utilities\KeyboardHandler.cs" />
     <Compile Include="Utilities\AppManager.cs" />
     <Compile Include="Program.cs" />
